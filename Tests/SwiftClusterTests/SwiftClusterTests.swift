@@ -5,14 +5,19 @@
     final class SwiftClusterTests: XCTestCase {
         
         func testExample() {
-            let lines = try! String(contentsOfFile: "/Users/erikheitfield/Xcode Projects/SwiftCluster/Sources/Docs/test_image_data.csv")
-                .components(separatedBy: CharacterSet.newlines)
-            let pixels = lines.compactMap { line -> [Double]? in
-                let channels = line.components(separatedBy: ", ")
-                    .compactMap { Double($0) }
-                guard channels.count == 3 else { return nil }
-                return channels
+            guard let fileURL = URL(string: "https://raw.githubusercontent.com/eheitfield/SwiftCluster/main/Sources/Docs/test_image_data.csv"),
+                  let fileData = try? String(contentsOf: fileURL) else {
+                XCTFail()
+                return
             }
+            let pixels = fileData
+                .components(separatedBy: CharacterSet.newlines)
+                .compactMap { line -> [Double]? in
+                    let channels = line.components(separatedBy: ", ")
+                        .compactMap { Double($0) }
+                    guard channels.count == 3 else { return nil }
+                    return channels
+                }
             let pixelColorData = Matrix(array2D: pixels)
             let model = ClusterModel(
                 data: pixelColorData,
