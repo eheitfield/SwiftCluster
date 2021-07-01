@@ -36,7 +36,7 @@ All of the initialization rules described above involve randomly assigning obser
 
 The image below is a 50 x 50 bitmap of a photo of a peony I took at the [United States Botanical Garden](https://www.usbg.gov) in Washington, DC.  
 
-![Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony.jpeg | width=100)
+![Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony.jpeg)
 
 In this example we will use SwiftCluster to create a "posterized" version the image in which the hundreds of distinct colors in the original image are replaced with just 8 representative colors.
 
@@ -94,7 +94,7 @@ let pixelPosterizedColors = groupIDs.map{ meanColors.getRow($0) }
 ```
 When the pixel colors represented in `pixelPosterizedColors` are plotted on a 50 x 50 grid, the resulting posterized image looks like this.
 
-![Posterized Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony_8_colors.jpeg | width=100)
+![Posterized Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony_8_colors.jpeg)
 
 ## License
 
