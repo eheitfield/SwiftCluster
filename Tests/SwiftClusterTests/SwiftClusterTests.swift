@@ -7,8 +7,7 @@
         func testExample() {
             guard let fileURL = URL(string: "https://raw.githubusercontent.com/eheitfield/SwiftCluster/main/Sources/Docs/test_image_data.csv"),
                   let fileData = try? String(contentsOf: fileURL) else {
-                XCTFail()
-                return
+                preconditionFailure("Unable to read image data.")
             }
             let pixels = fileData
                 .components(separatedBy: CharacterSet.newlines)

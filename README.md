@@ -4,7 +4,7 @@
 
 This package supports [k-means cluster analysis](https://en.wikipedia.org/wiki/K-means_clustering) in Swift. Cluster analysis involves sorting a large number of observations into a much smaller number of statistically similar groups.  It is most commonly used for exploratory data analysis, but also has application in data compression, image processing, and machine learning.
 
-Clustering data with SwiftCluster involves three steps. First, input data must be organized into  an *n* x *m* matrix of `Double`s where each row corresponds to an observation and each column corresponds to a variable.  For details on the matrix structures used by SwiftCluster, see [SimpleMatrixKit](https://github.com/eheitfield/SimpleMatrixKit.git).   Second, a `ClusterModel` struct is configured with the input data matrix and other parameters defining how the cluster analysis should be run.  Finally, the `ClusterModel` struct's `run()` method is called to perform the analysis.  `run()` returns an *n*-element `Int` array of group identifiers arranged in the same order as the input data and a *k* x *m* matrix of mean variable values for each group. Depending on the size of the dataset, the number of clusters to be created, and other parameters of the model, the cluster analysis can take several seconds to complete, so `run()` is often called on a background thread.
+Clustering data with SwiftCluster involves three steps. First, input data must be organized into  an *n* x *m* matrix of `Double`s where each row corresponds to an observation and each column corresponds to a variable.  For details on the matrix structures used by SwiftCluster, see [SimpleMatrixKit](https://github.com/eheitfield/SimpleMatrixKit.git).   Second, a `ClusterModel` struct is configured with the input data matrix and other parameters defining how the cluster analysis should be run.  Finally, the `ClusterModel` struct's `run()` method is called to perform the analysis.  `run()` returns an *n*-element `Int` array of group identifiers arranged in the same order as the input data and a *k* x *m* matrix of mean variable values for each group. 
 
 ## Algorithm Options
 
@@ -38,14 +38,13 @@ The image below is a 50 x 50 bitmap of a photo of a peony I took at the [United 
 
 ![Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony.jpeg)
 
-In this example we will use SwiftCluster to create a "posterized" version the image in which the hundreds of distinct colors in the original image are replaced with just 8 representative colors.
+In this example we will use SwiftCluster to create a "posterized" version the image in which the hundreds of distinct colors in the original image are replaced with just eight representative colors.
 
 The file [test_image_data.csv](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/test_image_data.csv) contains red, green, and blue color channel levels for each of the 2,500 pixels in the peony image.  The code snippet below loads the csv data into a 2500 x 3 matrix in which the rows corresponds pixels and the columns correspond to the three color channels.
 ```
 guard let fileURL = URL(string: "https://raw.githubusercontent.com/eheitfield/SwiftCluster/main/Sources/Docs/test_image_data.csv"),
       let fileData = try? String(contentsOf: fileURL) else {
-    XCTFail()
-    return
+      preconditionFailure("Unable to read image data.")
 }
 let pixels = fileData
     .components(separatedBy: CharacterSet.newlines)
@@ -67,7 +66,7 @@ let model = ClusterModel(
     showDiagnostics: true
 )
 ```
-`model` is configured to group the color data into 8 clusters.  Groups are initialized using the Arthur-Vassilvetskii. algorithm  The optimization routine is set to end after 15 iterations or when the within-cluster mean criteria improves by less than one percent.
+`model` is configured to group the color data into eight clusters.  Groups are initialized using the Arthur-Vassilvetskii. algorithm  The optimization routine is set to end after 15 iterations or when the within-cluster mean criteria improves by less than one percent.
 
 We can now run the analysis and store our results.
 ```
@@ -88,11 +87,11 @@ Finished
 2.5337 Seconds
 ```
 
-`groupIDs` is a 2,500 element `Int` array.  Each element of the array corresponds to one of the rows of `pixelColorData` and contains an integer between 0 and 7 indicating the group to which the pixel belongs.  `meanColors` is an 8 x 3 `Matrix<Double>` where each row corresponds to one of the 8 clusters and the columns contain mean red, green, and blue color channel values for each group.  The identifiers in `groupIDs` are matched to the rows of `meanColors` so we can create a synthetic dataset of posterized pixel color information as follows:
+`groupIDs` is a 2,500 element `Int` array.  Each element of the array corresponds to one of the rows of `pixelColorData` and contains an integer between 0 and 7 indicating the group to which the pixel belongs.  `meanColors` is an 8 x 3 `Matrix<Double>` where each row corresponds to one of the eight clusters and the columns contain mean red, green, and blue color channel values for each group.  The identifiers in `groupIDs` are matched to the rows of `meanColors` so we can create a synthetic dataset of posterized pixel color information as follows:
 ```
 let pixelPosterizedColors = groupIDs.map{ meanColors.getRow($0) }
 ```
-When the pixel colors represented in `pixelPosterizedColors` are plotted on a 50 x 50 grid, the resulting posterized image looks like this.
+When the pixel colors represented in `pixelPosterizedColors` are arranged on a 50 x 50 grid, the resulting posterized image looks like this.
 
 ![Posterized Peony](https://github.com/eheitfield/SwiftCluster/blob/main/Sources/Docs/peony_8_colors.jpeg)
 

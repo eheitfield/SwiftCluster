@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import SimpleMatrixKit
 
 /// Model object used to perform k-means cluster analysis on a dataset.
@@ -69,13 +68,23 @@ struct ClusterModel {
     
     /// List of group IDs
     public var allGroupIDs: Range<Int> { return 0..<nGroups }
-            
+    
+    /// Create a new cluster model
+    /// - Parameters:
+    ///   - data: n x m matrix where each row is an observation and each column is a variable
+    ///   - numberOfGroups: desired number of clusters
+    ///   - initializationRule: algorithm for creating starting clusters
+    ///   - stoppingRules: set of conditions for terminating optimization
+    ///   - showDiagnostics: flag to log progress to the console
     public init(data: Matrix<Double>,
          numberOfGroups: Int,
          initializationRule: InitializationRule = .randomPartitions,
          stoppingRules: Set<StopRule> = [.distanceChange(percent: 0.01)],
          showDiagnostics: Bool = false
     ) {
+        guard !data.isEmpty else {
+            preconditionFailure("ClusterModel initialized with no data.")
+        }
         self.data = data
         self.nGroups = numberOfGroups
         self.initializationRule = initializationRule
@@ -84,11 +93,12 @@ struct ClusterModel {
     }
     
     /// Run cluster analysis
-    /// - Returns:  (groups) N array of group IDs for each observation,
-    ///             (groupMeans) N x K matrix of group means
+    /// - Returns: (groups,groupMeans)
+    ///     - groups: n-array of group IDs for each observation
+    ///     - groupMeans: n x k matrix of group centroids
     ///
-    /// This method should usually be called on a background thread.
-    /// This method uses the system random number generator when initializing groups.
+    /// Each ID in `groups` is an integer from 0 to k-1 corresponding
+    /// one of the rows of `groupMeans`.
     public func run() -> (groups: [Int], groupMeans: Matrix<Double>) {
         var generator = SystemRandomNumberGenerator()
         return self.run(using: &generator)
@@ -97,10 +107,12 @@ struct ClusterModel {
     
     /// Run cluster analysis
     /// - Parameter generator: a user supplied random number generator
-    /// - Returns:  (groups) N array of group IDs for each observation,
-    ///             (groupMeans) N x K matrix of group means
+    /// - Returns: (groups,groupMeans)
+    ///     - groups: n-array of group IDs for each observation
+    ///     - groupMeans: n x k matrix of group centroids
     ///
-    /// This method should usually be called on a background thread.
+    /// Each ID in `groups` is an integer from 0 to k-1 corresponding
+    /// one of the rows of `groupMeans`.
     public func run<G: RandomNumberGenerator>(using generator: inout G) -> (groups: [Int], groupMeans: Matrix<Double>) {
         let startTimeTic = DispatchTime.now().uptimeNanoseconds
         var elapsedTIme: Double {
