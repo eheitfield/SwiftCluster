@@ -30,7 +30,9 @@ There is no practical way to determine whether the iterative k-means algorithm h
 
 ### Random Number Generators
 
-All of the initialization rules described above involve randomly assigning observations to groups.  By default, `ClusterModel`'s `run()` method uses `SystemRandomNumberGenerator()` to draw random numbers.  Alternatively, a user supplied generator conforming to the `RandomNumberGenerator` protocol can be used by calling the `run(using generator:)` method.  This can be useful if, for example, one wishes to use a seeded pseudorandom number generator for replication or testing purposes. 
+All of the initialization rules described above involve randomly assigning observations to groups.  By default, `ClusterModel`'s `run()` method uses `SystemRandomNumberGenerator` to draw random samples.  Alternatively, a user-supplied generator conforming to the Swift Standard Library's `RandomNumberGenerator` protocol can be used by calling `ClusterModels`'s `run(using generator:)` method.  
+
+For convenience, SwiftCluster includes `SeededRandomNumberGenerator`, a rudimentary linear congruential generator that is initialized with a `UInt32` seed value.  This generator produces a consistent sequence of pseudorandom numbers for a given seed, which can be useful for testing and replication purposes. Note, however, that `SeededRandomNumberGenerator` is not as robust as `SystemRandomNumberGenerator` and it should not be used in situations where a very long sequence of random numbers is needed.
 
 ## Usage Example
 
