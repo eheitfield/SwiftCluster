@@ -120,6 +120,7 @@ struct ClusterModel {
         }
         if showDiagnostics {
             print("Starting cluster analysis of \(nObservations) observations in \(nGroups) groups.")
+            print("Iter.    Dist.    %Cng.     Time")
         }
         var oldMeanDistance = Double.greatestFiniteMagnitude
         var groups = createStartingGroups(using: &generator)
@@ -138,7 +139,7 @@ struct ClusterModel {
             oldMeanDistance = meanDistance
             if showDiagnostics {
                 let outStr = String(
-                    format: "Iter: %3d MDist %7.2g Per.Chg.: %6.1g Time: %7.5g",
+                    format: "%5d %8.2g %8.2g %8.3g",
                     iter,
                     meanDistance,
                     distChange*100,
@@ -285,11 +286,8 @@ struct ClusterModel {
     /// - Parameter m: N x K matrix
     /// - Returns: K array of column means
     private func columnMeans(m: Matrix<Double>) -> [Double] {
-        var cumsum = Array(repeating: 0.0, count: m.cols)
-        for row in m.allRows {
-            for j in 0..<m.cols {
-                cumsum[j] += row[j]
-            }
+        let cumsum = m.reduce(Array(repeating: 0.0, count: m.cols)) { cumRows, nextRow in
+            return zip(cumRows,nextRow).map { $0.0 + $0.1 }
         }
         return cumsum.map { $0/Double(m.rows) }
     }
@@ -298,10 +296,10 @@ struct ClusterModel {
     /// - Parameter a: an array od data
     /// - Returns: (smallest value, index of smallest value)
     private func minWithIndex(a: [Double]) -> (minValue: Double, minIndex: Int) {
-        guard let result = zip(a,a.indices).min(by: { $0.0 < $1.0 } ) else {
+        guard let result = a.enumerated().min(by: { $0.1 < $1.1 }) else {
             fatalError("Attempted to find minimum of empty array.")
         }
-        return result
+        return (result.1,result.0)
     }
         
 }

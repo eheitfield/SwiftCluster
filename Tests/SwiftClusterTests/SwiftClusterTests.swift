@@ -65,6 +65,5 @@
             )
             let (groupIDs, meanColors) = model.run()
             let pixelPosterizedColors = groupIDs.map{ meanColors.getRow($0) }
-            print(pixelPosterizedColors)
         }
     }

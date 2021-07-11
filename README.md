@@ -77,16 +77,15 @@ let (groupIDs, meanColors) = model.run()
 Since we have set `showDiagnostics` to `true`, the method logs information on optimization progress to the console.
 ```
 Starting cluster analysis of 2500 observations in 8 groups.
-Iter:   1 MDist 1.1e+03 Per.Chg.: 2e+307 Time:  1.0768
-Iter:   2 MDist 8.9e+02 Per.Chg.:  2e+01 Time:  1.3034
-Iter:   3 MDist 7.8e+02 Per.Chg.:  1e+01 Time:  1.5354
-Iter:   4 MDist 7.5e+02 Per.Chg.:      4 Time:  1.7658
-Iter:   5 MDist 7.4e+02 Per.Chg.:      2 Time:  2.0044
-Iter:   6 MDist 7.3e+02 Per.Chg.:      1 Time:  2.2494
-Iter:   7 MDist 7.3e+02 Per.Chg.:    0.5 Time:  2.5162
+Iter.    Dist.    %Cng.     Time
+    1  9.3e+02 1.9e+307     1.08
+    2  8.2e+02       13     1.31
+    3    8e+02      3.2     1.56
+    4  7.9e+02      1.1      1.8
+    5  7.8e+02     0.99     2.02
 Reached minimum change threshold.
 Finished
-2.5337 Seconds
+2.0303 Seconds
 ```
 
 `groupIDs` is a 2,500 element `Int` array.  Each element of the array corresponds to one of the rows of `pixelColorData` and contains an integer between 0 and 7 indicating the group to which the pixel belongs.  `meanColors` is an 8 x 3 `Matrix<Double>` where each row corresponds to one of the eight clusters and the columns contain mean red, green, and blue color channel values for each group.  The identifiers in `groupIDs` are matched to the rows of `meanColors` so we can create a synthetic dataset of posterized pixel color information as follows:
