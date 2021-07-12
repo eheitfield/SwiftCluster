@@ -16,7 +16,7 @@ import SimpleMatrixKit
 /// Depending on the size of the dataset algorithm parameters the analysis
 /// can take several seconds to run, so I recommend calling ``run`` on a
 /// background thread.
-struct ClusterModel {
+public struct ClusterModel {
     
     /// Options for ending cluster analysis
     public enum StopRule: Hashable {
